@@ -87,13 +87,13 @@ Accepted values: "true", "false", True, False
 Example: "true" OR True
 Default: "false"
 
--- **safesearch**
+- **safesearch**
 > A flag indicating that only images suitable for all ages should be returned. Expects a bool/str.
 Accepted values: "true", "false", True, False
 Example: "true" OR True
 Default: "false"
 
--- **order**
+- **order**
 > How the results should be ordered. Expects a str.
 Accepted values: "popular", "latest"
 Example: "latest"
