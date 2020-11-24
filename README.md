@@ -119,3 +119,6 @@ Example: I really dunno.
 Accepted values: "true", "false", True, False 
 Example: False OR "false"
 Default: "false"
+
+---
+### Please report bugs or give suggestions. I will add whatever you want.
