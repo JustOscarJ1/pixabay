@@ -1,23 +1,25 @@
 # Pixabay API Wrapper.
 
-**Version 1.0.0**
+**Version 1.0.1**
 
 A easy-to-use Python API wrapper for [Pixabay](https://pixabay.com/api/docs/).
 
 ---
 
 ## Usage
-The module uses the Searcher class to make quick, easy searches. Give it a dictionary with the params you want for your search.
+The module uses the Searcher class to make quick, easy searches. Give it a dictionary with the params you want for your search and it will return a ApiResponse object.
 Paramater names can be found on the official [Pixabay Docs](https://pixabay.com/api/docs/) or further down in these docs.
 
 *Searching for images:*
+
+### Quickstart
 ```py
 from pixabay import Searcher
 import json
 
-api_key = '123456'
-image_searcher = Searcher(api_key)
-json_data = json.loads(image_searcher.image_search(params={'q':'dog', 'editors_choice': True}).text)
+api_key = '123456' # Change value to Pixabay API Key
+image_searcher = Searcher(api_key) # Initialize searcher object.
+first_image = image_searcher.image_search(params={'q':'dog'}).image # Make an image search and use the .image method to retrieve the first image.
 ```
 
 *Searching for videos:*
@@ -121,4 +123,44 @@ Example: False OR "false"
 Default: "false"
 
 ---
+
+## ApiResponse object/parsing data.
+The ApiResponse object contains a large amount of class variables to easily get the data you need. You can also get the full dump of data easily!
+
+**Methods**
+
+- **index**
+Returns a result with the specified index.
+
+## Class variables.
+
+-- **sort**
+Contains "video" or "image" depending on what type of search created the object.
+
+- **response**
+Contains the response of the API call. If the response was previously cached and the content was taken from that it defaults to 200.
+
+- **image**
+Contains the first image only, will only exist if ApiResponse has a sort of "image".
+
+- **images**
+Contains all images excluding other data in the response, will only exist if ApiResponse has a sort of "image".
+
+- **video(s)**
+Same as image(s) except it will only exist if ApiResponse has a sort of "video".
+
+- **amount**
+Returns the total amount of images/videos .
+
+**Dunders**
+
+-- **__len__**
+Returns amount of results.
+
+-- **__getitem__**
+Simply returns the image/video in the specified index for iteration.
+
+-- **__str__**
+Returns content.
+
 ### Please report bugs or give suggestions. I will add whatever you want.
