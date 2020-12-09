@@ -132,9 +132,9 @@ The ApiResponse object contains a large amount of class variables to easily get 
 - **index**
 Returns a result with the specified index.
 
-## Class variables.
+**Class variables.**
 
--- **sort**
+- **sort**
 Contains "video" or "image" depending on what type of search created the object.
 
 - **response**
@@ -154,13 +154,13 @@ Returns the total amount of images/videos .
 
 **Dunders**
 
--- **__len__**
+- **__len__**
 Returns amount of results.
 
--- **__getitem__**
+- **__getitem__**
 Simply returns the image/video in the specified index for iteration.
 
--- **__str__**
+- **__str__**
 Returns content.
 
 ### Please report bugs or give suggestions. I will add whatever you want.
