@@ -123,6 +123,21 @@ Example: False OR "false"
 Default: "false"
 
 ---
+## Caching
+Caching is absolutley vital in order to fulfill requests faster.
+
+By default caching is *enabled* although it can manually be disabled.
+
+Caching is stored in a JSON file named "caching.json", it stores the search type, paramaters and data. Assuming caching is enabled for the search if the search type and paramaters match the data will automatically be returned instead of calling the API.
+
+**Disabling caching**
+If needed caching can be disabled manually to do this add the "caching=False" yeah idk what its called. just add it if you want.
+```py
+data = image_searcher.image_search(params={'q':'Disabled Cache'}, caching=False)
+```
+***Only disable if it necessary***
+
+---
 
 ## ApiResponse object/parsing data.
 The ApiResponse object contains a large amount of class variables to easily get the data you need. You can also get the full dump of data easily!
