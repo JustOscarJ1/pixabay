@@ -1,18 +1,50 @@
 import requests
 import warnings
+import json
+from pathlib import Path
 
 def add_param(request_url, param, data):
     return request_url + '&' + param + '=' + data
 
-def create_url(request_url, params):
+
+def add_cache(params, data):
+
+    with open('caching.json', 'r') as f:
+        try:
+            cached = json.loads(f.read())
+        except json.decoder.JSONDecodeError:
+            cached = []
+
+    try:
+        cached.append({str(params):data})
+    except AttributeError:
+        exit()
+
+
+    with open('caching.json', 'w') as f:
+        f.write(json.dumps(cached))
+
+def create_url(request_url, params, cache):
+    if not Path("caching.json").is_file():
+        cache = False
+
+    if cache:
+
+        with open('caching.json') as f:
+            data = json.load(f)
+
+        for d in data:
+            if str(list(d.keys())[0]) == str(params):
+                return json.loads(list(d.values())[0])
+
     # converts params to lower
     params = dict((k.lower() if isinstance(k, str) else k, v.lower() if isinstance(v, str) else v) for k, v in params.items())
 
     for param in params.keys():
         if param == 'q':
             if len(params['q']) > 100:
-                warnings.warn('Param "q" cannot exceed 100, defaulting to "api".')
-                request_url = add_param(request_url, 'q', 'api')
+                warnings.warn('Param "q" cannot exceed 100.')
+                request_url = add_param(request_url, 'q', params['q'])
             else:
                 request_url = add_param(request_url, 'q', params['q'].replace(' ', '+'))
 
@@ -173,15 +205,84 @@ class Searcher:
     def update_key(self, api_key):
         self.api_key = api_key
 
-    def image_search(self, params):
-        request_url = f'https://pixabay.com/api/?key={self.api_key}'
-        request_url = create_url(request_url=request_url, params=params)
-        return requests.get(request_url)
+    def image_search(self, params, caching=True):
+        params['type'] = 'image'
 
-    def video_search(self, params):
+        request_url = f'https://pixabay.com/api/?key={self.api_key}'
+        request_url = create_url(request_url=request_url, params=params, cache=caching)
+
+        if caching:
+            if not type(request_url) == dict:
+                r = requests.get(request_url)
+                add_cache(params, r.text)
+                return ApiResponse(r, 'image')
+            else:
+                return ApiResponse(request_url, 'image', cached=True)
+        else:
+            return ApiResponse(requests.get(request_url), 'image')
+
+
+    def video_search(self, params, caching=True):
+
+        params['type'] = 'video'
+
         request_url = f'https://pixabay.com/api/videos/?key={self.api_key}'
-        request_url = create_url(request_url=request_url, params=params)
-        return requests.get(request_url)
+        request_url = create_url(request_url=request_url, params=params, cache=caching)
+
+        if caching:
+            if not type(request_url) == dict:
+                r = requests.get(request_url)
+                add_cache(params, r.text)
+                return ApiResponse(r, 'video')
+            else:
+                return ApiResponse(request_url, 'video', cached=True)
+        else:
+            return ApiResponse(requests.get(request_url), 'video')
 
     def docs(self):
         pass
+
+
+
+class ApiResponse:
+    def __init__(self, data, sort, cached=False):
+        if not cached:
+            self.response = data
+
+            data = json.loads(data.text)
+
+            self.content = data
+            self.amount = data['totalHits']
+        else:
+            self.content = data
+            self.response = 200
+            self.amount = data['totalHits']
+
+        self.sort = sort
+        if self.sort == 'image':
+            try:
+                self.image = data['hits'][0]
+            except IndexError:
+                self.image = ''
+            self.images = data['hits']
+        else:
+            try:
+              self.video = data['hits'][0]
+            except IndexError:
+                self.video = ''
+            self.videos = data['hits']
+
+    def __len__(self):
+        return self.amount
+
+    def __getitem__(self, position):
+        return self.videos[position]
+
+    def index(self, index):
+        if self.sort == 'image':
+            return self.images[index]
+        else:
+            return self.videos[index]
+
+    def __str__(self):
+        return str(self.content)
