@@ -206,6 +206,17 @@ class Searcher:
         self.api_key = api_key
 
     def image_search(self, params, caching=True):
+
+        """
+        :param params:
+        Parameters of the search, can be found on either the projects Github (https://github.com/JustOscarJ1/pixabay) or official Pixabay docs.
+        :param caching:
+        Weather or not the wrapper should cache the results.
+        Default: True
+        :return:
+        ApiResponse object.
+
+        """
         params['type'] = 'image'
 
         request_url = f'https://pixabay.com/api/?key={self.api_key}'
@@ -224,6 +235,15 @@ class Searcher:
 
     def video_search(self, params, caching=True):
 
+        """
+        :param params:
+        Parameters of the search, can be found on either the projects Github (https://github.com/JustOscarJ1/pixabay) or official Pixabay docs.
+        :param caching:
+        Weather or not the wrapper should cache the results.
+        Default: True
+        :return:
+        ApiResponse object.
+        """
         params['type'] = 'video'
 
         request_url = f'https://pixabay.com/api/videos/?key={self.api_key}'
